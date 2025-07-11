@@ -1,0 +1,11 @@
+CREATE TABLE IF NOT EXISTS users (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(100) NOT NULL,
+  email VARCHAR(255) NOT NULL UNIQUE,
+  passwordHash VARCHAR(255) NOT NULL,
+  role ENUM('admin', 'user') DEFAULT 'user',
+  isVerified BOOLEAN DEFAULT FALSE,
+  otp_code VARCHAR(10),
+  otp_expiresAt DATETIME,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+); 

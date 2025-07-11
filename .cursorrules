@@ -1,0 +1,131 @@
+# .cursorrules (Project-Specific Coding and Review Guidelines)
+
+## 1. Core Principles
+
+- The system must be **maintainable**, **scalable**, and **reliable**.
+- All code and architecture must follow industry best practices for Node.js, Express, and backend development.
+- Adhere to key software engineering principles:
+  - **DRY** (Don't Repeat Yourself): Avoid code duplication; centralize logic in utilities or shared modules.
+  - **KISS** (Keep It Simple, Stupid): Favor simple, direct solutions over unnecessary complexity or abstraction.
+  - **YAGNI** (You Aren't Gonna Need It): Only implement features and abstractions that are currently required.
+  - **Single Responsibility Principle**: Each module, class, or function should have one clear responsibility.
+  - **Separation of Concerns**: Keep business logic, data access, validation, and API logic in their respective layers.
+- All contributors must ensure their changes uphold these principles and the long-term health of the codebase.
+
+## 2. General Best Practices
+
+- Always validate user permissions and ownership before any update, delete, or sensitive read operation.
+- Use try/catch and log errors for all async operations; never swallow errors silently.
+- Use constants/enums for all status, type, and role fields.
+- Document all new features, endpoints, and business logic in the backend documentation.
+- When adding new fields, relationships, or flows, update both code and documentation.
+- Use repository methods for all database access; never access the DB directly from controllers or services.
+- Write modular, single-responsibility functions and classes.
+- Use environment variables for all secrets and environment-specific config.
+- Write and maintain unit/integration tests for all critical business logic.
+- **When working on changes to existing modules, always ensure backward compatibility. Do not introduce breaking changes such as altering endpoint response payloads, request schemas, or removing fields in a way that breaks existing API consumers.**
+
+## 3. Architectural Layers
+
+### 3.1. Routes & Controllers (for future expansion)
+
+- Validate and sanitize all incoming request data using validators.
+- Return clear, consistent error messages and status codes.
+- Use asyncHandler or similar middleware to catch errors.
+- Document all endpoints, request/response schemas, and error cases.
+- Never include business logic in controllers; delegate to services.
+
+### 3.2. Services (for future expansion)
+
+- Always emit events and/or notifications for significant business actions (creation, update, status change, etc.).
+- Integrate with NotificationService and other cross-cutting services for visibility and audit trails.
+- Validate all input and sanitize data before processing or storing.
+- Use dependency injection or clear import structure for all dependencies.
+- When adding new service logic, update documentation and .cursorrules accordingly.
+
+### 3.3. Repositories (for future expansion)
+
+- Always validate user ownership and permissions before updates or deletes.
+- Use transactions for multi-step or multi-table updates to ensure data consistency.
+- Build dynamic queries to only update provided fields.
+- Log errors with enough context for debugging.
+- Never expose raw SQL or sensitive DB errors to the client.
+
+### 3.4. Validators
+
+- Define and enforce schemas for all request payloads (e.g., using Yup or Zod).
+- Validate all required fields, types, and value constraints.
+- Reuse and compose schemas for consistency across endpoints.
+- Keep validation logic out of controllers and services.
+
+### 3.5. Migrations
+
+- Every schema change requires a new JS migration and matching up/down SQL files in `migrations/sqls/`.
+- **All migrations must use [db-migrate](https://github.com/db-migrate/node-db-migrate).**
+- To run migrations, use the command `npm run migrate`.
+- For each migration, create a JS file in `/migrations` that references the corresponding up/down SQL files in `/migrations/sqls/` using the `@/migrations` path convention.
+- Never modify a migration that has already been run; always create a new one.
+- Test all migrations before production deployment.
+- Write idempotent, reversible migration scripts.
+- Document schema changes and migration rationale in the documentation.
+
+### 3.6. Utils, Factories, and Helpers
+
+- Write pure, stateless utility functions where possible.
+- Document utility functions with clear input/output and usage notes.
+- Reuse utilities across services and controllers to avoid duplication.
+- Keep utility logic out of business and API layers.
+
+### 3.7. Config & Constants
+
+- Store all environment-specific values in config files or environment variables.
+- Use constants/enums for all repeated values (statuses, roles, types, etc.).
+- Document all config options and their expected values.
+
+## 4. Security
+
+- Never log or expose sensitive data (passwords, tokens, PII) in logs or error messages.
+- Use secure password hashing and token generation for all authentication flows.
+- Validate and sanitize all user input to prevent injection attacks.
+
+## 5. Logging
+
+- Use a centralized logger utility for all logging (implement one if not present).
+- Log all errors with a consistent structure (e.g., JSON format).
+- Include a request ID and user ID in all logs, where applicable.
+- Do not log sensitive information (e.g., passwords, API keys).
+
+## 6. API Versioning (for future expansion)
+
+- All new APIs should be versioned using a URL prefix (e.g., `/v1/`).
+- Existing APIs should be migrated to the versioned URL structure as they are updated.
+
+## 7. Dependency Management
+
+- Use `npm` for all dependency management.
+- Before adding a new dependency, check if a similar one already exists.
+- Keep dependencies up-to-date by running `npm outdated` and `npm update` regularly.
+
+## 8. Code Formatting
+
+- Use Prettier for all code formatting.
+- Use ESLint for all code linting.
+- Configure your editor to format on save.
+
+## 9. Testing & Documentation
+
+- Write unit tests for all new services and utilities.
+- Write integration tests for all new API endpoints.
+- Aim for a minimum of 80% code coverage.
+- Update the `BACKEND_DOCUMENTATION.md` file for all new features, endpoints, and migrations.
+- Keep the API documentation (Swagger or similar) up to date.
+
+## 10. Contribution Guidelines
+
+- Write clear, maintainable code with comments where necessary.
+- Submit pull requests with clear descriptions and test coverage.
+- Follow the project structure and coding standards.
+
+---
+
+**These rules are mandatory for all contributors and reviewers. Update this file as the codebase evolves.** 
